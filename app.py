@@ -21,20 +21,31 @@ os.environ['SSL_CERT_FILE'] = certifi.where()
 # df.shape
 
 
-df=[]
-i=0
-while True:
-    if i==0:
-        offset=""
-    else:
-        offset=f"%20offset%20{i}00"
-    url = 'https://data.cdc.gov/resource/n8mc-b4w4.csv?$query=SELECT%0A%20%20%60res_state%60%2C%0A%20%20%60case_month%60%2C%0A%20%20%60age_group%60%2C%0A%20%20%60sex%60%2C%0A%20%20%60ethnicity%60%2C%0A%20%20%60race%60%2C%0A%20%20count(*)%20AS%20%60count%60%0AGROUP%20BY%0A%20%20%60res_state%60%2C%0A%20%20%60case_month%60%2C%0A%20%20%60age_group%60%2C%0A%20%20%60sex%60%2C%0A%20%20%60race%60%2C%0A%20%20%60ethnicity%60'
-    temp=pd.read_csv(requests.get(url).text)
-    if temp.shape[0]>0:
-        df.append(pd.read_csv(requests.get(url).text))
-        i+=1
-    else:
-        break
-df=pd.concat(df)
-df
-df.shape
+# df=[]
+# i=0
+# while True:
+#     if i==0:
+#         offset=""
+#     else:
+#         offset=f"%20offset%20{i}00"
+#     url = 'https://data.cdc.gov/resource/n8mc-b4w4.csv?$query=SELECT%0A%20%20%60res_state%60%2C%0A%20%20%60case_month%60%2C%0A%20%20%60age_group%60%2C%0A%20%20%60sex%60%2C%0A%20%20%60ethnicity%60%2C%0A%20%20%60race%60%2C%0A%20%20count(*)%20AS%20%60count%60%0AGROUP%20BY%0A%20%20%60res_state%60%2C%0A%20%20%60case_month%60%2C%0A%20%20%60age_group%60%2C%0A%20%20%60sex%60%2C%0A%20%20%60race%60%2C%0A%20%20%60ethnicity%60'
+#     temp=pd.read_csv(requests.get(url).text)
+#     if temp.shape[0]>0:
+#         df.append(pd.read_csv(requests.get(url).text))
+#         i+=1
+#     else:
+#         break
+# df=pd.concat(df)
+
+
+
+import pandas as pd
+import io
+import requests
+url = 'https://data.cdc.gov/resource/n8mc-b4w4.csv?$query=SELECT%0A%20%20%60res_state%60%2C%0A%20%20%60case_month%60%2C%0A%20%20%60age_group%60%2C%0A%20%20%60sex%60%2C%0A%20%20%60ethnicity%60%2C%0A%20%20%60race%60%2C%0A%20%20count(*)%20AS%20%60count%60%0AGROUP%20BY%0A%20%20%60res_state%60%2C%0A%20%20%60case_month%60%2C%0A%20%20%60age_group%60%2C%0A%20%20%60sex%60%2C%0A%20%20%60race%60%2C%0A%20%20%60ethnicity%60'
+s=requests.get(url).content
+c=pd.read_csv(io.StringIO(s.decode('utf-8')))
+
+
+c
+c.shape
