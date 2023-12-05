@@ -32,3 +32,17 @@ with col2:
     date2 = pd.to_datetime(st.date_input("End Date", endDate))
 
 df = df[(df["case_month"] >= date1) & (df["case_month"] <= date2)].copy()
+
+
+
+st.sidebar.header("Choose your filter:")
+state = st.sidebar.multiselect("Pick your State", df["res_state"].unique())
+
+if not state:
+    df2 = df.copy()
+else:
+    df2 = df[df["res_state"].isin(state)]
+
+df2
+df2.shape
+
