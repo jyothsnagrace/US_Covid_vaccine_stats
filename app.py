@@ -1,9 +1,13 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
 
 def load_data():
     df = pd.read_csv("COVID-19_Case_Surveillance_Public_Use_Data_with_Geography.csv")
+    df = df.rename(columns={'sex': 'gender'})
+    df = df.apply(lambda x: x.replace({'Missing|Unknown|NA':'Other'}, regex=True))
+
     return df
 
 
@@ -45,4 +49,35 @@ else:
 
 df2
 df2.shape
+race = st.sidebar.multiselect("Pick your Race", df["race"].unique())
+ethnicity = st.sidebar.multiselect("Pick your Ethnicity", df["ethnicity"].unique())
 
+
+
+AgeGender_count = df2.groupby(['age_group','gender'])['gender'].count().reset_index(name='count')
+race_ethnicity_ct = df2.groupby(['race','ethnicity'])['ethnicity'].count().reset_index(name='count')
+
+
+with col1:
+    st.subheader(f"Vaccination status of {state} by Age Group by gender")
+    bar = alt.Chart(AgeGender_count).mark_bar(
+        cornerRadiusTopLeft=5,
+        cornerRadiusTopRight=7).encode(
+            # x='age_group:O',
+            # y='count:Q',
+            alt.X('age_group:O').axis().title('Age Group'),
+            alt.Y('count:Q').axis().title('count'),
+            color='gender:N'
+            
+    )
+    st.altair_chart(bar, use_container_width=True, theme="streamlit")
+
+with col2:
+    st.subheader("Vaccination status by Race by Ethnicity")
+    barh = alt.Chart(race_ethnicity_ct).mark_bar().encode(
+        # x='race:O',
+        alt.X('count').stack("normalize"),
+        alt.Y('race:O').axis().title('Race'),
+        color='ethnicity:N'
+    )
+    st.altair_chart(barh, use_container_width=True, theme="streamlit")
