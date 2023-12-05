@@ -19,3 +19,16 @@ df = load_data()
 df
 df.shape
 
+
+col1, col2 = st.columns(2)
+df["case_month"] = pd.to_datetime(df["case_month"])
+
+startDate = pd.to_datetime(df["case_month"]).min()
+endDate = pd.to_datetime(df["case_month"]).max()
+
+with col1:
+    date1 = pd.to_datetime(st.date_input("Start Date", startDate))
+with col2:
+    date2 = pd.to_datetime(st.date_input("End Date", endDate))
+
+df = df[(df["case_month"] >= date1) & (df["case_month"] <= date2)].copy()
